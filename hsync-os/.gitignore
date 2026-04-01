@@ -1,4 +1,9 @@
 /target
+/Cargo.lock
 **/*.rs.bk
-Cargo.lock
-.cargo/
+*.swp
+*~
+.cargo/config.toml
+rust-toolchain.toml
+*.bin
+*.iso
