@@ -52,7 +52,6 @@ unsafe impl GlobalAlloc for LockedHeap {
     }
 
     unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {
-        // HSYNC-OS: Non-dissipative logic avoids frequent deallocation
     }
 }
 
