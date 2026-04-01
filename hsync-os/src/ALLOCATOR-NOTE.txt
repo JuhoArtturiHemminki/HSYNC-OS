@@ -1,0 +1,34 @@
+HSYNC-OS MEMORY MANAGEMENT NOTE: THE BUMP ALLOCATOR STRATEGY
+
+The current memory management implementation in allocator.rs utilizes a 
+Bump Allocator (also known as a Linear or Stack Allocator). This is a 
+conscious and strategic design choice for the Genesis phase of HSYNC-OS.
+
+1. ABSOLUTE DETERMINISM (O(1))
+Unlike other allocator designs (such as Linked List or Buddy Allocators) 
+that must search for free memory blocks—introducing variable search times 
+and "jitter"—the Bump Allocator simply increments a single pointer. 
+This ensures that every allocation takes exactly the same amount of time, 
+guaranteeing the hard real-time determinism required by HSYNC-OS.
+
+2. NON-DISSIPATIVE LOGIC
+To support the goal of non-dissipative computing, the deallocation 
+function (dealloc) is intentionally empty. By avoiding complex memory 
+reorganization and pointer shuffling during runtime, we minimize 
+processor state-transition entropy, leading to reduced thermal output 
+and electromagnetic noise.
+
+3. THE 64 KB LIMITATION & RESOURCE MANAGEMENT
+While a Bump Allocator cannot reclaim individual memory blocks, this 
+limitation is mitigated by our current architecture:
+
+- Current Usage: HSYNC-OS is designed to be extremely "lean." Most core 
+  operations rely on the stack and static memory. Dynamic heap allocation 
+  is used only when absolutely necessary.
+- Future Proofing: This implementation is for the Genesis phase. As we 
+  move to Phase II (Networking), we will transition to a Fixed-Size 
+  Block Allocator. This will allow for memory reuse while maintaining 
+  the strict O(1) deterministic performance of the current system.
+
+The priority for v0.1.0-ALPHA is timing accuracy and absolute system 
+stability over memory flexibility.
